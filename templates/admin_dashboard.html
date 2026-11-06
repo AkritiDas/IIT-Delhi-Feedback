@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrator Dashboard – {{ portal_title }}</title>
+    
+    <!-- Bootstrap 5.3.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Chart.js 4.4.1 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="bg-body-tertiary">
+
+    <!-- Top Navigation -->
+    <nav class="navbar navbar-expand-lg main-navbar">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand d-flex align-items-center gap-3" href="{{ url_for('admin_dashboard') }}">
+                <div class="brand-seal">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+                <div>
+                    <div class="brand-title">IIT Delhi Virtual Labs</div>
+                    <div class="brand-subtitle">Administrator Quality Analytics</div>
+                </div>
+            </a>
+
+            <div class="d-flex align-items-center gap-3">
+                <a href="{{ url_for('index') }}" target="_blank" class="btn btn-outline-secondary btn-sm d-none d-md-inline-flex align-items-center gap-1">
+                    <i class="bi bi-box-arrow-up-right"></i>
+                    <span>View Public Portal</span>
+                </a>
+                <button type="button" class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle theme">
+                    <i class="bi bi-moon-stars-fill"></i>
+                </button>
+                <div class="dropdown">
+                    <button class="btn btn-maroon btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-circle me-1"></i>Administrator
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                        <li><h6 class="dropdown-header">Signed in as {{ session.get('admin_username') }}</h6></li>
+                        <li><span class="dropdown-item-text small text-muted">Session started: {{ session.get('login_time') }}</span></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="{{ url_for('admin_logout') }}"><i class="bi bi-box-arrow-right me-2"></i>Sign Out</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid px-4 py-4">
+
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show py-2 small" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close py-2" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Analytics Header & Key Metrics -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+            <div>
+                <h3 class="fw-bold mb-0">Quality Control & Feedback Dashboard</h3>
+                <p class="text-muted small mb-0">Real-time telemetry and student evaluation records across IIT Delhi Virtual Labs.</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{{ url_for('admin_export_csv', **filters) }}" class="btn btn-outline-success btn-sm d-flex align-items-center gap-2">
+                    <i class="bi bi-file-earmark-spreadsheet-fill"></i>
+                    <span>Export CSV ({{ records|length }} Records)</span>
+                </a>
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary btn-sm" title="Refresh metrics">
+                    <i class="bi bi-arrow-clockwise"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Metric Cards Grid -->
+        <div class="row g-3 mb-4">
+            <div class="col-sm-6 col-xl-3">
+                <div class="admin-metric-card h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-muted small fw-bold text-uppercase">Total Submissions</span>
+                        <div class="stats-icon bg-primary-subtle text-primary" style="width: 36px; height: 36px; margin: 0; font-size: 1rem;">
+                            <i class="bi bi-folder-check"></i>
+                        </div>
+                    </div>
+                    <div class="admin-metric-val text-primary">{{ stats.total_count }}</div>
+                    <div class="small text-muted mt-1">
+                        <i class="bi bi-incognito text-secondary me-1"></i>{{ stats.anonymous_count }} Anonymous ({{ ((stats.anonymous_count / stats.total_count * 100)|round|int) if stats.total_count > 0 else 0 }}%)
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-xl-3">
+                <div class="admin-metric-card h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-muted small fw-bold text-uppercase">Avg Overall Rating</span>
+                        <div class="stats-icon bg-warning-subtle text-warning" style="width: 36px; height: 36px; margin: 0; font-size: 1rem;">
+                            <i class="bi bi-star-fill"></i>
+                        </div>
+                    </div>
+                    <div class="admin-metric-val text-warning">{{ stats.avg_overall }} <span class="fs-5 text-muted fw-normal">/ 5.0</span></div>
+                    <div class="small text-muted mt-1">
+                        Experiment: <strong>{{ stats.avg_experiment }}★</strong> • Tech: <strong>{{ stats.avg_technical }}★</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-xl-3">
+                <div class="admin-metric-card h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-muted small fw-bold text-uppercase">Navigation Rating</span>
+                        <div class="stats-icon bg-info-subtle text-info" style="width: 36px; height: 36px; margin: 0; font-size: 1rem;">
+                            <i class="bi bi-compass"></i>
+                        </div>
+                    </div>
+                    <div class="admin-metric-val text-info">{{ stats.avg_navigation }} <span class="fs-5 text-muted fw-normal">/ 5.0</span></div>
+                    <div class="small text-muted mt-1">
+                        Ease of lab UI and controls
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-xl-3">
+                <div class="admin-metric-card h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-muted small fw-bold text-uppercase">Recommendation Rate</span>
+                        <div class="stats-icon bg-success-subtle text-success" style="width: 36px; height: 36px; margin: 0; font-size: 1rem;">
+                            <i class="bi bi-hand-thumbs-up"></i>
+                        </div>
+                    </div>
+                    {% set yes_count = stats.recommendations.get('Yes', 0) %}
+                    {% set rec_pct = ((yes_count / stats.total_count * 100)|round|int) if stats.total_count > 0 else 0 %}
+                    <div class="admin-metric-val text-success">{{ rec_pct }}%</div>
+                    <div class="small text-muted mt-1">
+                        {{ yes_count }} of {{ stats.total_count }} users recommend
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="row g-4 mb-4">
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm rounded-4 p-3 h-100 bg-surface">
+                    <h6 class="fw-bold mb-3 d-flex align-items-center">
+                        <i class="bi bi-pie-chart-fill text-maroon me-2"></i>Subject Distribution
+                    </h6>
+                    <div style="position: relative; height: 240px;">
+                        <canvas id="subjectChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm rounded-4 p-3 h-100 bg-surface">
+                    <h6 class="fw-bold mb-3 d-flex align-items-center">
+                        <i class="bi bi-bar-chart-fill text-warning me-2"></i>Rating Breakdown (1★ to 5★)
+                    </h6>
+                    <div style="position: relative; height: 240px;">
+                        <canvas id="ratingChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm rounded-4 p-3 h-100 bg-surface">
+                    <h6 class="fw-bold mb-3 d-flex align-items-center">
+                        <i class="bi bi-bug-fill text-danger me-2"></i>Top Reported Issues
+                    </h6>
+                    <div style="position: relative; height: 240px;">
+                        <canvas id="issuesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter and Search Bar -->
+        <div class="card border-0 shadow-sm rounded-4 p-3 mb-4 bg-surface">
+            <form method="GET" action="{{ url_for('admin_dashboard') }}" class="row g-2 align-items-center">
+                <div class="col-lg-3 col-md-6">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-body-tertiary"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control" name="search" value="{{ filters.search }}" placeholder="Search Ref ID, experiment, name...">
+                    </div>
+                </div>
+
+                <div class="col-lg-2 col-md-6">
+                    <select class="form-select form-select-sm" name="subject">
+                        <option value="">All Subjects</option>
+                        {% for s in subjects %}
+                        <option value="{{ s }}" {% if filters.subject == s %}selected{% endif %}>{{ s }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-lg-2 col-md-4">
+                    <select class="form-select form-select-sm" name="rating">
+                        <option value="">All Ratings</option>
+                        <option value="5" {% if filters.rating == '5' %}selected{% endif %}>5 Stars (Outstanding)</option>
+                        <option value="4" {% if filters.rating == '4' %}selected{% endif %}>4 Stars (Very Good)</option>
+                        <option value="3" {% if filters.rating == '3' %}selected{% endif %}>3 Stars (Good)</option>
+                        <option value="2" {% if filters.rating == '2' %}selected{% endif %}>2 Stars (Fair)</option>
+                        <option value="1" {% if filters.rating == '1' %}selected{% endif %}>1 Star (Poor)</option>
+                    </select>
+                </div>
+
+                <div class="col-lg-2 col-md-4">
+                    <select class="form-select form-select-sm" name="user_type">
+                        <option value="">All User Types</option>
+                        {% for ut in user_types %}
+                        <option value="{{ ut }}" {% if filters.user_type == ut %}selected{% endif %}>{{ ut }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-lg-2 col-md-4">
+                    <select class="form-select form-select-sm" name="issue">
+                        <option value="">All Issues</option>
+                        {% for iss in issues_list %}
+                        <option value="{{ iss }}" {% if filters.issue == iss %}selected{% endif %}>{{ iss }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-lg-1 col-md-12 d-flex gap-1">
+                    <button type="submit" class="btn btn-maroon btn-sm w-100" title="Apply Filters">
+                        <i class="bi bi-funnel"></i>
+                    </button>
+                    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary btn-sm" title="Clear Filters">
+                        <i class="bi bi-x-circle"></i>
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Feedback Records Table -->
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-surface">
+            <div class="card-header bg-transparent py-3 d-flex justify-content-between align-items-center border-bottom">
+                <h6 class="fw-bold mb-0">
+                    <i class="bi bi-table me-2 text-maroon"></i>Feedback Records (Showing {{ records|length }})
+                </h6>
+                <span class="badge bg-secondary-subtle text-secondary">Ordered by Newest First</span>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-custom table-hover mb-0 align-middle">
+                    <thead>
+                        <tr>
+                            <th>Ref ID</th>
+                            <th>Date / Time</th>
+                            <th>Contributor</th>
+                            <th>Subject</th>
+                            <th>Experiment</th>
+                            <th>Overall</th>
+                            <th>Issues</th>
+                            <th>Screenshots</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if records|length == 0 %}
+                        <tr>
+                            <td colspan="9" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-2 d-block mb-2 text-secondary"></i>
+                                No feedback records match the current filter criteria.
+                            </td>
+                        </tr>
+                        {% endif %}
+
+                        {% for r in records %}
+                        <tr>
+                            <td>
+                                <span class="font-monospace fw-bold text-maroon small">{{ r.reference_id }}</span>
+                            </td>
+                            <td class="small text-muted">{{ r.created_at }}</td>
+                            <td>
+                                {% if r.anonymous_status %}
+                                    <span class="badge bg-secondary-subtle text-secondary"><i class="bi bi-incognito me-1"></i>Anonymous</span>
+                                {% else %}
+                                    <div class="fw-bold small">{{ r.full_name }}</div>
+                                    <div class="text-muted" style="font-size: 0.75rem;">{{ r.email or 'No email' }} • <span class="badge bg-light text-dark border">{{ r.user_type }}</span></div>
+                                {% endif %}
+                            </td>
+                            <td><span class="badge bg-light text-dark border">{{ r.subject }}</span></td>
+                            <td class="small fw-semibold" style="max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ r.experiment_name }}">
+                                {{ r.experiment_name }}
+                            </td>
+                            <td>
+                                <span class="text-warning fw-bold">
+                                    {% for _ in range(r.overall_rating) %}★{% endfor %}
+                                </span>
+                                <span class="small text-muted">({{ r.overall_rating }}/5)</span>
+                            </td>
+                            <td>
+                                {% if r.selected_issues|length > 0 %}
+                                    <span class="badge bg-danger-subtle text-danger border" title="{{ r.selected_issues|join(', ') }}">
+                                        {{ r.selected_issues|length }} issue(s)
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-success-subtle text-success border">None</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if r.screenshot_paths|length > 0 %}
+                                    <span class="badge bg-info-subtle text-info border">
+                                        <i class="bi bi-image me-1"></i>{{ r.screenshot_paths|length }}
+                                    </span>
+                                {% else %}
+                                    <span class="text-muted small">0</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end">
+                                <div class="btn-group btn-group-sm">
+                                    <button type="button" class="btn btn-outline-primary btn-sm view-feedback-btn" data-id="{{ r.feedback_id }}" title="View Full Details">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                    <a href="{{ url_for('feedback_receipt', reference_id=r.reference_id) }}" target="_blank" class="btn btn-outline-secondary btn-sm" title="Open Public Receipt">
+                                        <i class="bi bi-box-arrow-up-right"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-outline-danger btn-sm delete-feedback-btn" data-id="{{ r.feedback_id }}" data-ref="{{ r.reference_id }}" title="Delete Record">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ========================================================================
+         Admin Feedback Detail Modal
+         ======================================================================== -->
+    <div class="modal fade" id="adminDetailModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div>
+                        <h5 class="modal-title fw-bold mb-0" id="detailRefId">Feedback Detail</h5>
+                        <span class="small text-muted" id="detailTimestamp"></span>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4" id="detailModalBody">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-maroon" role="status"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content text-center p-3">
+                <div class="modal-body">
+                    <i class="bi bi-trash3-fill text-danger fs-1 mb-2 d-block"></i>
+                    <h5 class="fw-bold">Delete Feedback Record?</h5>
+                    <p class="text-muted small mb-3">
+                        Are you sure you want to permanently delete record <strong id="deleteTargetRef"></strong> and its uploaded screenshots? This action cannot be undone.
+                    </p>
+                    <div class="d-flex justify-content-center gap-2">
+                        <button type="button" class="btn btn-secondary btn-sm px-3" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger btn-sm px-3" id="confirmDeleteBtn">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5.3.3 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Theme initialization
+        const themeBtn = document.getElementById('themeToggleBtn');
+        const saved = localStorage.getItem('iitd_theme') || 'light';
+        document.documentElement.setAttribute('data-theme', saved);
+        if (themeBtn) {
+            themeBtn.querySelector('i').className = saved === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
+            themeBtn.addEventListener('click', () => {
+                const current = document.documentElement.getAttribute('data-theme') || 'light';
+                const next = current === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', next);
+                localStorage.setItem('iitd_theme', next);
+                themeBtn.querySelector('i').className = next === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
+            });
+        }
+
+        // ====================================================================
+        // Chart.js Visualizations
+        // ====================================================================
+        const rawSubjectData = {{ stats.subject_distribution | tojson }};
+        const rawRatingData = {{ stats.rating_breakdown | tojson }};
+        const rawIssueData = {{ stats.issue_counts | tojson }};
+
+        // 1. Subject Chart (Doughnut)
+        const subLabels = Object.keys(rawSubjectData);
+        const subValues = Object.values(rawSubjectData);
+        if (subLabels.length > 0) {
+            new Chart(document.getElementById('subjectChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: subLabels,
+                    datasets: [{
+                        data: subValues,
+                        backgroundColor: [
+                            '#7B1113', '#E65100', '#F59E0B', '#10B981', '#3B82F6', '#6366F1', '#8B5CF6', '#EC4899'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right', labels: { boxWidth: 12, font: { size: 10 } } }
+                    }
+                }
+            });
+        }
+
+        // 2. Rating Breakdown Chart (Bar)
+        new Chart(document.getElementById('ratingChart'), {
+            type: 'bar',
+            data: {
+                labels: ['1 Star', '2 Stars', '3 Stars', '4 Stars', '5 Stars'],
+                datasets: [{
+                    label: 'Count',
+                    data: [
+                        rawRatingData[1] || 0,
+                        rawRatingData[2] || 0,
+                        rawRatingData[3] || 0,
+                        rawRatingData[4] || 0,
+                        rawRatingData[5] || 0
+                    ],
+                    backgroundColor: ['#EF4444', '#F97316', '#FBBF24', '#34D399', '#10B981'],
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, ticks: { precision: 0 } }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+
+        // 3. Issues Breakdown Chart (Horizontal Bar)
+        const issueLabels = Object.keys(rawIssueData).slice(0, 5);
+        const issueValues = Object.values(rawIssueData).slice(0, 5);
+        new Chart(document.getElementById('issuesChart'), {
+            type: 'bar',
+            indexAxis: 'y',
+            data: {
+                labels: issueLabels.length > 0 ? issueLabels : ['No issues reported'],
+                datasets: [{
+                    label: 'Reports',
+                    data: issueValues.length > 0 ? issueValues : [0],
+                    backgroundColor: '#DC2626',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { beginAtZero: true, ticks: { precision: 0 } }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+
+        // ====================================================================
+        // View Details Modal Handler
+        // ====================================================================
+        const detailModal = new bootstrap.Modal(document.getElementById('adminDetailModal'));
+        const detailModalBody = document.getElementById('detailModalBody');
+        const detailRefId = document.getElementById('detailRefId');
+        const detailTimestamp = document.getElementById('detailTimestamp');
+
+        document.querySelectorAll('.view-feedback-btn').forEach(btn => {
+            btn.addEventListener('click', async function () {
+                const fId = this.getAttribute('data-id');
+                detailModalBody.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-maroon" role="status"></div></div>';
+                detailModal.show();
+
+                try {
+                    const res = await fetch(`/admin/api/feedback/${fId}`);
+                    const json = await res.json();
+                    if (json.success && json.data) {
+                        const d = json.data;
+                        detailRefId.textContent = `${d.reference_id} – Details`;
+                        detailTimestamp.textContent = `Submitted at: ${d.created_at}`;
+
+                        let issuesHtml = '';
+                        if (d.selected_issues && d.selected_issues.length > 0) {
+                            issuesHtml = d.selected_issues.map(i => `<span class="badge bg-danger-subtle text-danger border me-1 mb-1">${i}</span>`).join('');
+                        } else {
+                            issuesHtml = '<span class="text-success small"><i class="bi bi-check-circle me-1"></i>No issues reported</span>';
+                        }
+
+                        let screenshotsHtml = '';
+                        if (d.screenshot_paths && d.screenshot_paths.length > 0) {
+                            screenshotsHtml = '<div class="d-flex flex-wrap gap-2 mt-2">';
+                            d.screenshot_paths.forEach(img => {
+                                screenshotsHtml += `
+                                    <a href="/uploads/${img}" target="_blank" class="border rounded p-1 bg-white">
+                                        <img src="/uploads/${img}" alt="Screenshot" style="width: 100px; height: 75px; object-fit: cover; border-radius: 4px;">
+                                    </a>
+                                `;
+                            });
+                            screenshotsHtml += '</div>';
+                        } else {
+                            screenshotsHtml = '<span class="text-muted small">No screenshots attached</span>';
+                        }
+
+                        detailModalBody.innerHTML = `
+                            <div class="row g-3 small mb-3">
+                                <div class="col-sm-6">
+                                    <div class="text-muted">Contributor Name:</div>
+                                    <strong>${d.full_name || 'Anonymous User'}</strong> (${d.user_type})
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="text-muted">Email / Phone:</div>
+                                    <strong>${d.email || 'N/A'}</strong> / ${d.mobile_number || 'N/A'}
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="text-muted">Subject / Lab:</div>
+                                    <strong>${d.subject}</strong>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="text-muted">Experiment:</div>
+                                    <strong>${d.experiment_name}</strong>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="text-muted">Device / Browser:</div>
+                                    ${d.device} • ${d.browser}
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="text-muted">Would Recommend:</div>
+                                    <span class="badge ${d.recommendation === 'Yes' ? 'bg-success' : 'bg-secondary'}">${d.recommendation}</span>
+                                </div>
+                            </div>
+
+                            <hr class="border-secondary-subtle">
+
+                            <h6 class="fw-bold mb-2">Evaluation Star Ratings:</h6>
+                            <div class="row g-2 small text-center mb-3">
+                                <div class="col-3 p-2 bg-body-tertiary rounded">
+                                    <div class="text-muted">Overall</div>
+                                    <div class="fw-bold text-warning fs-5">${d.overall_rating}★</div>
+                                </div>
+                                <div class="col-3 p-2 bg-body-tertiary rounded">
+                                    <div class="text-muted">Experiment</div>
+                                    <div class="fw-bold text-warning fs-5">${d.experiment_rating}★</div>
+                                </div>
+                                <div class="col-3 p-2 bg-body-tertiary rounded">
+                                    <div class="text-muted">Navigation</div>
+                                    <div class="fw-bold text-warning fs-5">${d.navigation_rating}★</div>
+                                </div>
+                                <div class="col-3 p-2 bg-body-tertiary rounded">
+                                    <div class="text-muted">Performance</div>
+                                    <div class="fw-bold text-warning fs-5">${d.technical_rating}★</div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <h6 class="fw-bold mb-1">Selected Technical Issues:</h6>
+                                <div>${issuesHtml}</div>
+                            </div>
+
+                            ${d.technical_details ? `
+                                <div class="mb-3">
+                                    <h6 class="fw-bold mb-1">Smart Diagnostic Notes:</h6>
+                                    <p class="p-2 bg-body-tertiary rounded small text-secondary mb-0">${d.technical_details}</p>
+                                </div>
+                            ` : ''}
+
+                            <div class="mb-3">
+                                <h6 class="fw-bold mb-1">Experience Description:</h6>
+                                <p class="p-3 bg-body-tertiary rounded small text-secondary mb-0">${d.experience_description}</p>
+                            </div>
+
+                            ${d.positive_experience ? `
+                                <div class="mb-3">
+                                    <h6 class="fw-bold mb-1">Positive Highlights:</h6>
+                                    <p class="p-2 bg-body-tertiary rounded small text-secondary mb-0">${d.positive_experience}</p>
+                                </div>
+                            ` : ''}
+
+                            ${d.improvement_suggestions ? `
+                                <div class="mb-3">
+                                    <h6 class="fw-bold mb-1">Recommended Improvements:</h6>
+                                    <p class="p-2 bg-body-tertiary rounded small text-secondary mb-0">${d.improvement_suggestions}</p>
+                                </div>
+                            ` : ''}
+
+                            <div class="mb-2">
+                                <h6 class="fw-bold mb-1">Uploaded Screenshots (${d.screenshot_paths.length}):</h6>
+                                <div>${screenshotsHtml}</div>
+                            </div>
+                        `;
+                    } else {
+                        detailModalBody.innerHTML = '<div class="alert alert-danger">Failed to load feedback details.</div>';
+                    }
+                } catch (e) {
+                    detailModalBody.innerHTML = '<div class="alert alert-danger">Error retrieving data.</div>';
+                }
+            });
+        });
+
+        // ====================================================================
+        // Delete Record Handler
+        // ====================================================================
+        const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+        const deleteTargetRef = document.getElementById('deleteTargetRef');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+        let pendingDeleteId = null;
+
+        document.querySelectorAll('.delete-feedback-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                pendingDeleteId = this.getAttribute('data-id');
+                deleteTargetRef.textContent = this.getAttribute('data-ref');
+                deleteModal.show();
+            });
+        });
+
+        if (confirmDeleteBtn) {
+            confirmDeleteBtn.addEventListener('click', async function () {
+                if (!pendingDeleteId) return;
+                try {
+                    const res = await fetch(`/admin/api/feedback/${pendingDeleteId}/delete`, { method: 'POST' });
+                    const json = await res.json();
+                    if (json.success) {
+                        deleteModal.hide();
+                        window.location.reload();
+                    } else {
+                        alert(json.message || 'Failed to delete record.');
+                    }
+                } catch (e) {
+                    alert('Error communicating with server.');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+

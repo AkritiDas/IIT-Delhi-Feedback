@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Submitted Successfully – {{ portal_title }}</title>
+    
+    <!-- Bootstrap 5.3.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="bg-body-tertiary">
+
+    <!-- Top Announcement Bar -->
+    <div class="top-notice-bar d-flex justify-content-between align-items-center no-print">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div>
+                <span class="pulsing-dot"></span>
+                <span>IIT Delhi Virtual Labs – Quality Assurance System</span>
+            </div>
+            <button type="button" class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle dark/light theme">
+                <i class="bi bi-moon-stars-fill"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Navigation Header -->
+    <nav class="navbar navbar-expand-lg main-navbar no-print">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-3" href="{{ url_for('index') }}">
+                <div class="brand-seal">
+                    <i class="bi bi-mortarboard-fill"></i>
+                </div>
+                <div>
+                    <div class="brand-title">IIT Delhi Virtual Labs</div>
+                    <div class="brand-subtitle">Smart Feedback Portal</div>
+                </div>
+            </a>
+            <div class="d-flex align-items-center gap-2">
+                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-house-door me-1"></i>Portal Home
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Success Confirmation Container -->
+    <main class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+
+                <!-- Success Hero Card -->
+                <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 mb-4 text-center bg-surface">
+                    <div class="mb-4">
+                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle" style="width: 80px; height: 80px; background: rgba(16, 185, 129, 0.12); color: #10B981;">
+                            <i class="bi bi-check-circle-fill" style="font-size: 3rem;"></i>
+                        </div>
+                    </div>
+
+                    <h1 class="display-6 fw-bold mb-2">Thank You for Your Valuable Feedback!</h1>
+                    <p class="text-secondary lead fs-6 mb-4" style="max-width: 620px; margin: 0 auto;">
+                        Your experience matters to us. Your feedback has been successfully submitted and will help improve the IIT Delhi Virtual Labs experience.
+                    </p>
+
+                    <!-- Reference ID Badge -->
+                    <div class="p-3 bg-body-tertiary rounded-3 border d-inline-block mx-auto mb-4 text-start">
+                        <div class="small text-muted text-uppercase fw-bold letter-spacing-1">Feedback Reference ID</div>
+                        <div class="d-flex align-items-center gap-3 mt-1">
+                            <span class="fs-4 fw-bold font-monospace text-maroon" id="refIdText">{{ record.reference_id }}</span>
+                            <button type="button" class="btn btn-sm btn-outline-secondary no-print" onclick="navigator.clipboard.writeText('{{ record.reference_id }}'); alert('Reference ID copied to clipboard: {{ record.reference_id }}');">
+                                <i class="bi bi-clipboard me-1"></i>Copy
+                            </button>
+                        </div>
+                        <div class="small text-muted mt-1">Keep this reference ID for any follow-up inquiries.</div>
+                    </div>
+
+                    <!-- Printable Acknowledgment Details -->
+                    <div class="text-start border rounded-3 p-4 bg-surface-elevated mb-4">
+                        <h5 class="fw-bold border-bottom pb-2 mb-3 d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-file-earmark-text text-maroon me-2"></i>Submission Summary</span>
+                            <span class="badge bg-secondary-subtle text-secondary small">{{ record.created_at }}</span>
+                        </h5>
+
+                        <div class="row g-3 small">
+                            <div class="col-sm-6">
+                                <span class="text-muted d-block">Contributor:</span>
+                                <strong>{{ record.full_name or 'Anonymous User' }}</strong> ({{ record.user_type }})
+                            </div>
+                            <div class="col-sm-6">
+                                <span class="text-muted d-block">Subject / Domain:</span>
+                                <strong>{{ record.subject }}</strong>
+                            </div>
+                            <div class="col-sm-6">
+                                <span class="text-muted d-block">Experiment Name:</span>
+                                <strong>{{ record.experiment_name }}</strong>
+                            </div>
+                            <div class="col-sm-6">
+                                <span class="text-muted d-block">Device & Browser:</span>
+                                <strong>{{ record.device }} • {{ record.browser }}</strong>
+                            </div>
+                        </div>
+
+                        <hr class="my-3 border-secondary-subtle">
+
+                        <!-- Rating Overview -->
+                        <div class="row g-3 small mb-3">
+                            <div class="col-6 col-md-3">
+                                <span class="text-muted d-block">Overall:</span>
+                                <span class="text-warning fw-bold">{{ record.overall_rating }}/5 ★</span>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <span class="text-muted d-block">Experiment:</span>
+                                <span class="text-warning fw-bold">{{ record.experiment_rating }}/5 ★</span>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <span class="text-muted d-block">Navigation:</span>
+                                <span class="text-warning fw-bold">{{ record.navigation_rating }}/5 ★</span>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <span class="text-muted d-block">Performance:</span>
+                                <span class="text-warning fw-bold">{{ record.technical_rating }}/5 ★</span>
+                            </div>
+                        </div>
+
+                        <!-- Issues Reported -->
+                        <div class="mb-3 small">
+                            <span class="text-muted d-block mb-1">Reported Technical Issues:</span>
+                            {% if record.selected_issues and record.selected_issues|length > 0 %}
+                                <div class="d-flex flex-wrap gap-1">
+                                    {% for iss in record.selected_issues %}
+                                    <span class="badge bg-danger-subtle text-danger border px-2 py-1">{{ iss }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <span class="text-success"><i class="bi bi-check-circle me-1"></i>No issues reported</span>
+                            {% endif %}
+                        </div>
+
+                        {% if record.technical_details %}
+                        <div class="mb-3 small">
+                            <span class="text-muted d-block mb-1">Diagnostic Detail:</span>
+                            <div class="p-2 bg-body-tertiary rounded text-secondary">{{ record.technical_details }}</div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Qualitative Description -->
+                        <div class="small mb-2">
+                            <span class="text-muted d-block mb-1">Feedback Description:</span>
+                            <p class="p-3 bg-body-tertiary rounded text-secondary mb-0">{{ record.experience_description }}</p>
+                        </div>
+
+                        <!-- Attached Screenshots -->
+                        {% if record.screenshot_paths and record.screenshot_paths|length > 0 %}
+                        <div class="mt-3 small">
+                            <span class="text-muted d-block mb-2">Attached Screenshots ({{ record.screenshot_paths|length }}):</span>
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for img in record.screenshot_paths %}
+                                <a href="{{ url_for('serve_upload', filename=img) }}" target="_blank" class="border rounded p-1 bg-white" title="Click to view full image">
+                                    <img src="{{ url_for('serve_upload', filename=img) }}" alt="Screenshot" style="width: 70px; height: 50px; object-fit: cover; border-radius: 4px;">
+                                </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="d-flex flex-wrap justify-content-center gap-3 no-print">
+                        <button type="button" class="btn btn-outline-secondary px-4 py-2" onclick="window.print();">
+                            <i class="bi bi-printer me-2"></i>Print / Save Acknowledgment
+                        </button>
+                        <a href="{{ url_for('index') }}#feedbackSection" class="btn btn-maroon px-4 py-2">
+                            <i class="bi bi-plus-circle me-2"></i>Submit Another Feedback
+                        </a>
+                        <a href="{{ url_for('index') }}" class="btn btn-outline-dark px-4 py-2">
+                            <i class="bi bi-house me-2"></i>Return to Portal
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="text-center py-4 text-muted small no-print">
+        &copy; 2026 Indian Institute of Technology Delhi • Virtual Labs Feedback System
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Simple dark mode toggler for success page
+        const themeBtn = document.getElementById('themeToggleBtn');
+        const saved = localStorage.getItem('iitd_theme') || 'light';
+        document.documentElement.setAttribute('data-theme', saved);
+        if (themeBtn) {
+            themeBtn.querySelector('i').className = saved === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
+            themeBtn.addEventListener('click', () => {
+                const current = document.documentElement.getAttribute('data-theme') || 'light';
+                const next = current === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', next);
+                localStorage.setItem('iitd_theme', next);
+                themeBtn.querySelector('i').className = next === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
+            });
+        }
+    </script>
+</body>
+</html>
+

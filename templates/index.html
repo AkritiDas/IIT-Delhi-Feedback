@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ portal_title }}</title>
+    
+    <!-- Bootstrap 5.3.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Custom Portal CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <!-- ========================================================================
+         1. Top Announcement Bar
+         ======================================================================== -->
+    <div class="top-notice-bar d-flex justify-content-between align-items-center">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <span class="pulsing-dot"></span>
+                <span><strong>Virtual Labs Quality Initiative:</strong> We value your feedback. Help us build better simulations.</span>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <span class="d-none d-md-inline text-white-50">Ministry of Education • NMEICT</span>
+                <button type="button" class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle dark/light theme" title="Toggle Dark/Light Mode">
+                    <i class="bi bi-moon-stars-fill"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================================
+         2. Main Header and Navigation
+         ======================================================================== -->
+    <nav class="navbar navbar-expand-lg main-navbar">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-3" href="{{ url_for('index') }}">
+                <div class="brand-seal">
+                    <i class="bi bi-mortarboard-fill"></i>
+                </div>
+                <div>
+                    <div class="brand-title">IIT Delhi Virtual Labs</div>
+                    <div class="brand-subtitle">Smart Feedback Portal</div>
+                </div>
+            </a>
+
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navContent" aria-controls="navContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navContent">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#home"><i class="bi bi-house-door me-1"></i>Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about"><i class="bi bi-info-circle me-1"></i>About Virtual Labs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#feedbackSection"><i class="bi bi-pencil-square me-1"></i>Give Feedback</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#guidelinesModal"><i class="bi bi-journal-text me-1"></i>Guidelines</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact"><i class="bi bi-envelope me-1"></i>Contact</a>
+                    </li>
+                </ul>
+
+                <div class="d-flex align-items-center gap-2">
+                    <a href="#feedbackSection" class="btn btn-maroon">
+                        <i class="bi bi-chat-heart me-1"></i>Share Your Experience
+                    </a>
+                    <a href="{{ url_for('admin_login') }}" class="btn btn-outline-secondary btn-sm ms-2" title="Admin Portal Sign In">
+                        <i class="bi bi-shield-lock"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ========================================================================
+         3. Hero Section
+         ======================================================================== -->
+    <section class="hero-section" id="home">
+        <div class="container">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-7">
+                    <div class="hero-pill">
+                        <i class="bi bi-stars"></i>
+                        <span>IIT Delhi Feedback Cycle 2026</span>
+                    </div>
+                    <h1 class="hero-title">
+                        Your Experience Helps Us Improve <span class="highlight">Virtual Learning.</span>
+                    </h1>
+                    <p class="hero-subtitle">
+                        Share your experience with IIT Delhi Virtual Labs. Your feedback helps us improve experiments, accessibility, performance, and the overall learning experience.
+                    </p>
+                    <div class="d-flex flex-wrap gap-3 mb-4">
+                        <a href="#feedbackSection" class="btn btn-maroon btn-lg px-4">
+                            <i class="bi bi-arrow-down-circle me-2"></i>Give Feedback Now
+                        </a>
+                        <button type="button" class="btn btn-maroon-outline btn-lg px-4" data-bs-toggle="modal" data-bs-target="#guidelinesModal">
+                            <i class="bi bi-book me-2"></i>View Feedback Guidelines
+                        </button>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2 text-muted small">
+                        <i class="bi bi-shield-check text-success fs-6"></i>
+                        <span>Secure academic feedback • Optional anonymous submission • ISO/IEC 27001 data integrity standards</span>
+                    </div>
+                </div>
+
+                <!-- Illustrative Statistics Benchmark Cards -->
+                <div class="col-lg-5">
+                    <div class="p-2">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="badge bg-secondary-subtle text-secondary px-3 py-2 border rounded-pill">
+                                <i class="bi bi-bar-chart-line me-1"></i>Illustrative Portal Benchmarks
+                            </span>
+                            <small class="text-muted">Updated Nov 2026</small>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <div class="stats-card">
+                                    <div class="stats-icon bg-danger-subtle text-danger">
+                                        <i class="bi bi-diagram-3-fill"></i>
+                                    </div>
+                                    <div class="stats-number text-maroon">12+</div>
+                                    <div class="stats-label">Lab Disciplines</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="stats-card">
+                                    <div class="stats-icon bg-warning-subtle text-warning">
+                                        <i class="bi bi-cpu-fill"></i>
+                                    </div>
+                                    <div class="stats-number text-maroon">180+</div>
+                                    <div class="stats-label">Simulations</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="stats-card">
+                                    <div class="stats-icon bg-success-subtle text-success">
+                                        <i class="bi bi-star-fill"></i>
+                                    </div>
+                                    <div class="stats-number text-maroon">{{ stats.avg_overall if stats.avg_overall > 0 else '4.8' }}★</div>
+                                    <div class="stats-label">Experiment Quality</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="stats-card">
+                                    <div class="stats-icon bg-info-subtle text-info">
+                                        <i class="bi bi-speedometer2"></i>
+                                    </div>
+                                    <div class="stats-number text-maroon">99.8%</div>
+                                    <div class="stats-label">Simulation Uptime</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================================
+         About Virtual Labs Section
+         ======================================================================== -->
+    <section class="py-5 bg-body-tertiary" id="about">
+        <div class="container py-2">
+            <div class="row justify-content-center text-center mb-4">
+                <div class="col-lg-8">
+                    <span class="text-uppercase fw-bold text-maroon small letter-spacing-1">National Mission Initiative</span>
+                    <h2 class="fw-bold mt-1">About IIT Delhi Virtual Labs</h2>
+                    <p class="text-muted">
+                        Virtual Labs is a landmark project under the National Mission on Education through Information and Communication Technology (NMEICT). IIT Delhi serves as a premier coordinating institute, providing students and faculty remote access to state-of-the-art laboratory experiments in engineering and sciences.
+                    </p>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm p-4 text-center rounded-4">
+                        <div class="mb-3">
+                            <i class="bi bi-universal-access text-danger fs-1"></i>
+                        </div>
+                        <h5 class="fw-bold">Anytime, Anywhere Access</h5>
+                        <p class="text-muted small mb-0">Enabling remote learners to perform complex lab experiments without physical equipment barriers.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm p-4 text-center rounded-4">
+                        <div class="mb-3">
+                            <i class="bi bi-award-fill text-warning fs-1"></i>
+                        </div>
+                        <h5 class="fw-bold">High Academic Fidelity</h5>
+                        <p class="text-muted small mb-0">Developed by leading academic faculty with rigorous simulation models and theoretical rigor.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm p-4 text-center rounded-4">
+                        <div class="mb-3">
+                            <i class="bi bi-arrow-repeat text-success fs-1"></i>
+                        </div>
+                        <h5 class="fw-bold">Continuous Refinement</h5>
+                        <p class="text-muted small mb-0">Your feedback directly drives software updates, glitch resolutions, and curriculum expansion.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================================
+         4. Feedback Form Section
+         ======================================================================== -->
+    <section class="py-5" id="feedbackSection">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+
+                    <!-- Form Header & Progress Indicator -->
+                    <div class="form-progress-wrapper">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center mb-2 gap-3">
+                            <div>
+                                <h3 class="fw-bold mb-0">Experiment Feedback & Quality Audit</h3>
+                                <p class="text-muted small mb-0">Please fill out all relevant sections to help our engineering teams.</p>
+                            </div>
+                            <div class="d-flex align-items-center gap-3">
+                                <!-- Anonymous Mode Toggle -->
+                                <div class="form-check form-switch m-0 d-flex align-items-center gap-2">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="anonymousToggle" name="anonymous_status" value="1">
+                                    <label class="form-check-label fw-bold small text-nowrap" for="anonymousToggle">
+                                        <i class="bi bi-incognito me-1"></i>Submit Anonymously
+                                    </label>
+                                </div>
+                                <button type="button" class="btn btn-outline-danger btn-sm" id="btnResetForm" title="Clear and reset form inputs">
+                                    <i class="bi bi-arrow-counterclockwise me-1"></i>Reset Form
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="d-flex justify-content-between align-items-center mt-3 mb-1">
+                            <span class="small fw-bold text-muted" id="formProgressText">Form Completion: 0%</span>
+                            <span class="small text-muted"><i class="bi bi-clock-history me-1"></i>Takes ~2 minutes</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill" id="formProgressFill" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Anonymous Active Info Banner -->
+                    <div id="anonymousBanner" class="alert alert-info border-0 shadow-sm rounded-4 mb-4" style="display: none;">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-shield-lock-fill fs-3 text-info me-3"></i>
+                            <div>
+                                <strong class="d-block">Anonymous Feedback Mode Activated</strong>
+                                <span class="small">Personal contact information will not be collected or stored with this record. Your ratings and feedback will remain completely untraceable.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Client Alert Box for Dynamic Errors -->
+                    <div id="formAlertBox" style="display: none;"></div>
+
+                    <!-- Main Feedback Form -->
+                    <form id="feedbackForm" enctype="multipart/form-data" novalidate>
+
+                        <!-- ========================================================================
+                             Section A: Personal Information
+                             ======================================================================== -->
+                        <div class="form-section-card" id="personalInfoSection">
+                            <div class="form-section-header">
+                                <div class="d-flex align-items-center">
+                                    <div class="section-badge">A</div>
+                                    <div>
+                                        <div class="section-title">Personal Information</div>
+                                        <p class="section-desc">Provide your contact details so our lab engineers can follow up if needed.</p>
+                                    </div>
+                                </div>
+                                <span class="badge bg-light text-muted border px-2 py-1">Confidential</span>
+                            </div>
+
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <label for="full_name" class="form-label">Full Name <span class="required-star">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-body-tertiary"><i class="bi bi-person"></i></span>
+                                        <input type="text" class="form-control" id="full_name" name="full_name" placeholder="e.g. Priya Sharma" required>
+                                    </div>
+                                    <div class="invalid-feedback">Full name is required.</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">Email Address <span class="required-star">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-body-tertiary"><i class="bi bi-envelope"></i></span>
+                                        <input type="email" class="form-control" id="email" name="email" placeholder="e.g. priya@university.edu" required>
+                                    </div>
+                                    <div class="invalid-feedback">A valid email address is required.</div>
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <label for="mobile_number" class="form-label">Mobile Number with Country Code</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-body-tertiary"><i class="bi bi-telephone"></i></span>
+                                        <input type="tel" class="form-control" id="mobile_number" name="mobile_number" placeholder="e.g. +91 9876543210">
+                                    </div>
+                                    <small class="text-muted">Include country code (e.g. +91 for India).</small>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label d-block">User Type <span class="required-star">*</span></label>
+                                    <div class="tile-radio-group">
+                                        <div>
+                                            <input type="radio" class="tile-radio-input" name="user_type" id="ut_student" value="Student" checked>
+                                            <label class="tile-radio-label" for="ut_student">
+                                                <i class="bi bi-backpack"></i>
+                                                <span>Student</span>
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <input type="radio" class="tile-radio-input" name="user_type" id="ut_faculty" value="Faculty">
+                                            <label class="tile-radio-label" for="ut_faculty">
+                                                <i class="bi bi-person-video3"></i>
+                                                <span>Faculty</span>
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <input type="radio" class="tile-radio-input" name="user_type" id="ut_researcher" value="Researcher">
+                                            <label class="tile-radio-label" for="ut_researcher">
+                                                <i class="bi bi-lightbulb"></i>
+                                                <span>Researcher</span>
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <input type="radio" class="tile-radio-input" name="user_type" id="ut_other" value="Other">
+                                            <label class="tile-radio-label" for="ut_other">
+                                                <i class="bi bi-people"></i>
+                                                <span>Other</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ========================================================================
+                             Section B: Virtual Lab Information
+                             ======================================================================== -->
+                        <div class="form-section-card">
+                            <div class="form-section-header">
+                                <div class="d-flex align-items-center">
+                                    <div class="section-badge">B</div>
+                                    <div>
+                                        <div class="section-title">Virtual Lab Information</div>
+                                        <p class="section-desc">Specify which virtual laboratory and simulation experiment you accessed.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <label for="subject" class="form-label">Subject / Laboratory <span class="required-star">*</span></label>
+                                    <select class="form-select" id="subject" name="subject" required>
+                                        <option value="" selected disabled>Select Subject Domain...</option>
+                                        {% for subj in subjects %}
+                                        <option value="{{ subj }}">{{ subj }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="experiment_name" class="form-label">Experiment Name <span class="required-star">*</span></label>
+                                    <input type="text" class="form-control" id="experiment_name" name="experiment_name" placeholder="e.g. Study of Operational Amplifiers" required>
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mb-4">
+                                <div class="col-12">
+                                    <label for="experiment_url" class="form-label">Experiment URL (Optional)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-body-tertiary"><i class="bi bi-link-45deg"></i></span>
+                                        <input type="url" class="form-control" id="experiment_url" name="experiment_url" placeholder="https://vlabs.iitd.ac.in/...">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label d-block">Device Used</label>
+                                    <div class="tile-radio-group">
+                                        <div>
+                                            <input type="radio" class="tile-radio-input" name="device" id="dev_desktop" value="Desktop">
+                                            <label class="tile-radio-label" for="dev_desktop">
+                                                <i class="bi bi-pc-display"></i>
+                                                <span>Desktop</span>
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <input type="radio" class="tile-radio-input" name="device" id="dev_laptop" value="Laptop" checked>
+                                            <label class="tile-radio-label" for="dev_laptop">
+                                                <i class="bi bi-laptop"></i>
+                                                <span>Laptop</span>
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <input type="radio" class="tile-radio-input" name="device" id="dev_tablet" value="Tablet">
+                                            <label class="tile-radio-label" for="dev_tablet">
+                                                <i class="bi bi-tablet"></i>
+                                                <span>Tablet</span>
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <input type="radio" class="tile-radio-input" name="device" id="dev_mobile" value="Mobile">
+                                            <label class="tile-radio-label" for="dev_mobile">
+                                                <i class="bi bi-phone"></i>
+                                                <span>Mobile</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label d-block">Browser Used</label>
+                                    <div class="tile-radio-group">
+                                        <div>
+                                            <input type="radio" class="tile-radio-input" name="browser" id="br_chrome" value="Chrome" checked>
+                                            <label class="tile-radio-label" for="br_chrome">
+                                                <i class="bi bi-browser-chrome"></i>
+                                                <span>Chrome</span>
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <input type="radio" class="tile-radio-input" name="browser" id="br_firefox" value="Firefox">
+                                            <label class="tile-radio-label" for="br_firefox">
+                                                <i class="bi bi-browser-firefox"></i>
+                                                <span>Firefox</span>
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <input type="radio" class="tile-radio-input" name="browser" id="br_edge" value="Edge">
+                                            <label class="tile-radio-label" for="br_edge">
+                                                <i class="bi bi-browser-edge"></i>
+                                                <span>Edge</span>
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <input type="radio" class="tile-radio-input" name="browser" id="br_safari" value="Safari">
+                                            <label class="tile-radio-label" for="br_safari">
+                                                <i class="bi bi-browser-safari"></i>
+                                                <span>Safari</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ========================================================================
+                             Section C: Star Rating System
+                             ======================================================================== -->
+                        <div class="form-section-card" id="starRatingSection">
+                            <div class="form-section-header">
+                                <div class="d-flex align-items-center">
+                                    <div class="section-badge">C</div>
+                                    <div>
+                                        <div class="section-title">Star Rating System</div>
+                                        <p class="section-desc">Rate your experience across four key quality parameters (1 = Poor, 5 = Outstanding).</p>
+                                    </div>
+                                </div>
+                                <span class="badge bg-warning-subtle text-warning border px-2 py-1"><i class="bi bi-star-fill me-1"></i>5-Star Scale</span>
+                            </div>
+
+                            <!-- Rating 1: Overall Experience -->
+                            <div class="rating-item-card">
+                                <div class="rating-info">
+                                    <div class="rating-title">1. Overall Experience <span class="required-star">*</span></div>
+                                    <p class="rating-desc">Your comprehensive impression of the laboratory session.</p>
+                                </div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="star-container" role="radiogroup" aria-label="Overall Experience Rating">
+                                        <button type="button" class="star-btn" data-val="1" aria-label="1 star"><i class="bi bi-star"></i></button>
+                                        <button type="button" class="star-btn" data-val="2" aria-label="2 stars"><i class="bi bi-star"></i></button>
+                                        <button type="button" class="star-btn" data-val="3" aria-label="3 stars"><i class="bi bi-star"></i></button>
+                                        <button type="button" class="star-btn" data-val="4" aria-label="4 stars"><i class="bi bi-star"></i></button>
+                                        <button type="button" class="star-btn" data-val="5" aria-label="5 stars"><i class="bi bi-star"></i></button>
+                                    </div>
+                                    <input type="hidden" name="overall_rating" id="overall_rating" class="rating-input" value="0">
+                                    <div class="rating-value-badge">Not Rated</div>
+                                </div>
+                            </div>
+
+                            <!-- Rating 2: Quality of Experiment -->
+                            <div class="rating-item-card">
+                                <div class="rating-info">
+                                    <div class="rating-title">2. Quality of Experiment <span class="required-star">*</span></div>
+                                    <p class="rating-desc">Scientific accuracy, clarity of principles, and realism of simulation model.</p>
+                                </div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="star-container" role="radiogroup" aria-label="Quality of Experiment Rating">
+                                        <button type="button" class="star-btn" data-val="1" aria-label="1 star"><i class="bi bi-star"></i></button>
+                                        <button type="button" class="star-btn" data-val="2" aria-label="2 stars"><i class="bi bi-star"></i></button>
+                                        <button type="button" class="star-btn" data-val="3" aria-label="3 stars"><i class="bi bi-star"></i></button>
+                                        <button type="button" class="star-btn" data-val="4" aria-label="4 stars"><i class="bi bi-star"></i></button>
+                                        <button type="button" class="star-btn" data-val="5" aria-label="5 stars"><i class="bi bi-star"></i></button>
+                                    </div>
+                                    <input type="hidden" name="experiment_rating" id="experiment_rating" class="rating-input" value="0">
+                                    <div class="rating-value-badge">Not Rated</div>
+                                </div>
+                            </div>
+
+                            <!-- Rating 3: Ease of Navigation -->
+                            <div class="rating-item-card">
+                                <div class="rating-info">
+                                    <div class="rating-title">3. Ease of Navigation <span class="required-star">*</span></div>
+                                    <p class="rating-desc">Intuitiveness of menus, instructions, tabs, and controls.</p>
+                                </div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="star-container" role="radiogroup" aria-label="Ease of Navigation Rating">
+                                        <button type="button" class="star-btn" data-val="1" aria-label="1 star"><i class="bi bi-star"></i></button>
+                                        <button type="button" class="star-btn" data-val="2" aria-label="2 stars"><i class="bi bi-star"></i></button>
+                                        <button type="button" class="star-btn" data-val="3" aria-label="3 stars"><i class="bi bi-star"></i></button>
+                                        <button type="button" class="star-btn" data-val="4" aria-label="4 stars"><i class="bi bi-star"></i></button>
+                                        <button type="button" class="star-btn" data-val="5" aria-label="5 stars"><i class="bi bi-star"></i></button>
+                                    </div>
+                                    <input type="hidden" name="navigation_rating" id="navigation_rating" class="rating-input" value="0">
+                                    <div class="rating-value-badge">Not Rated</div>
+                                </div>
+                            </div>
+
+                            <!-- Rating 4: Technical Performance -->
+                            <div class="rating-item-card">
+                                <div class="rating-info">
+                                    <div class="rating-title">4. Technical Performance <span class="required-star">*</span></div>
+                                    <p class="rating-desc">Speed, responsiveness, frame rates, and simulation execution stability.</p>
+                                </div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="star-container" role="radiogroup" aria-label="Technical Performance Rating">
+                                        <button type="button" class="star-btn" data-val="1" aria-label="1 star"><i class="bi bi-star"></i></button>
+                                        <button type="button" class="star-btn" data-val="2" aria-label="2 stars"><i class="bi bi-star"></i></button>
+                                        <button type="button" class="star-btn" data-val="3" aria-label="3 stars"><i class="bi bi-star"></i></button>
+                                        <button type="button" class="star-btn" data-val="4" aria-label="4 stars"><i class="bi bi-star"></i></button>
+                                        <button type="button" class="star-btn" data-val="5" aria-label="5 stars"><i class="bi bi-star"></i></button>
+                                    </div>
+                                    <input type="hidden" name="technical_rating" id="technical_rating" class="rating-input" value="0">
+                                    <div class="rating-value-badge">Not Rated</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ========================================================================
+                             Section D: Select Your Issues
+                             ======================================================================== -->
+                        <div class="form-section-card">
+                            <div class="form-section-header">
+                                <div class="d-flex align-items-center">
+                                    <div class="section-badge">D</div>
+                                    <div>
+                                        <div class="section-title">Did you experience any problems?</div>
+                                        <p class="section-desc">Select all issues that occurred during your virtual laboratory session (multi-select).</p>
+                                    </div>
+                                </div>
+                                <span class="badge bg-secondary-subtle text-secondary border px-2 py-1">Optional</span>
+                            </div>
+
+                            <div class="issues-grid">
+                                {% for issue in issues_list %}
+                                <div>
+                                    <input type="checkbox" class="issue-checkbox" name="selected_issues" id="issue_{{ loop.index }}" value="{{ issue }}">
+                                    <label class="issue-card-label" for="issue_{{ loop.index }}">
+                                        <div class="issue-icon-holder">
+                                            {% if 'loading' in issue|lower %}
+                                                <i class="bi bi-hourglass-split"></i>
+                                            {% elif 'simulation' in issue|lower or 'output' in issue|lower or 'inaccurate' in issue|lower %}
+                                                <i class="bi bi-gear-wide-connected"></i>
+                                            {% elif 'audio' in issue|lower or 'video' in issue|lower %}
+                                                <i class="bi bi-volume-mute"></i>
+                                            {% elif 'login' in issue|lower %}
+                                                <i class="bi bi-key"></i>
+                                            {% elif 'link' in issue|lower %}
+                                                <i class="bi bi-link-45deg"></i>
+                                            {% elif 'layout' in issue|lower or 'mobile' in issue|lower %}
+                                                <i class="bi bi-phone"></i>
+                                            {% elif 'unclear' in issue|lower %}
+                                                <i class="bi bi-question-circle"></i>
+                                            {% else %}
+                                                <i class="bi bi-exclamation-triangle"></i>
+                                            {% endif %}
+                                        </div>
+                                        <div class="issue-text">{{ issue }}</div>
+                                        <div class="issue-check-indicator"><i class="bi bi-check-lg"></i></div>
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+
+                            <!-- Expandable 'Other' issue textarea -->
+                            <div id="otherIssueDescWrapper" class="mt-3" style="display: none;">
+                                <label for="other_issue_desc" class="form-label fw-bold">Please specify the "Other" issue encountered:</label>
+                                <input type="text" class="form-control" id="other_issue_desc" name="other_issue_desc" placeholder="Briefly describe the specific anomaly or problem...">
+                            </div>
+
+                            <!-- Smart Conditional Question Box -->
+                            <div id="conditionalTechBox" class="conditional-box">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-cpu-fill text-warning fs-4 me-2"></i>
+                                    <strong class="text-primary">Smart Diagnostic: Technical Issue Details</strong>
+                                </div>
+                                <p class="text-muted small mb-2">You indicated technical difficulties. At what stage did this issue arise? (e.g., initial page load, variable sliders, clicking 'Simulate', plotting results):</p>
+                                <textarea class="form-control" id="technical_details" name="technical_details" rows="2" placeholder="e.g. When setting voltage slider to 12V and clicking 'Plot Characteristic Curve', the canvas froze without generating data points."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- ========================================================================
+                             Section E: Share Your Experience
+                             ======================================================================== -->
+                        <div class="form-section-card">
+                            <div class="form-section-header">
+                                <div class="d-flex align-items-center">
+                                    <div class="section-badge">E</div>
+                                    <div>
+                                        <div class="section-title">Tell us about your experience</div>
+                                        <p class="section-desc">Share detailed qualitative feedback regarding what worked well and what can be improved.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="experience_description" class="form-label">
+                                    Detailed Feedback Description <span class="required-star">*</span>
+                                    <span class="text-muted fw-normal" id="minCharNotice">(Min 10 chars required)</span>
+                                </label>
+                                <textarea class="form-control" id="experience_description" name="experience_description" rows="5" placeholder="Describe your experience with IIT Delhi Virtual Labs. What did you like? What problems did you face? What improvements would you suggest?" required></textarea>
+                                <div class="char-counter-bar">
+                                    <span>Provide constructive observations for lab developers</span>
+                                    <span id="charCounter">0 / 2000 characters</span>
+                                </div>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="positive_experience" class="form-label">What did you like most? (Optional)</label>
+                                    <textarea class="form-control" id="positive_experience" name="positive_experience" rows="2" placeholder="e.g. Visual quality of 3D apparatus, interactive circuit wiring..."></textarea>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="improvement_suggestions" class="form-label">Key Improvement Recommendations (Optional)</label>
+                                    <textarea class="form-control" id="improvement_suggestions" name="improvement_suggestions" rows="2" placeholder="e.g. Add step-by-step video demonstration or downloadable quiz..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ========================================================================
+                             Section F: Screenshot Upload
+                             ======================================================================== -->
+                        <div class="form-section-card">
+                            <div class="form-section-header">
+                                <div class="d-flex align-items-center">
+                                    <div class="section-badge">F</div>
+                                    <div>
+                                        <div class="section-title">Attach a Screenshot (Optional)</div>
+                                        <p class="section-desc">Upload screenshots of errors, broken simulations, unexpected outputs, or UI glitches.</p>
+                                    </div>
+                                </div>
+                                <span class="badge bg-secondary-subtle text-secondary border px-2 py-1">Max 10 MB each</span>
+                            </div>
+
+                            <div class="upload-dropzone" id="screenshotDropzone">
+                                <div class="upload-icon-circle">
+                                    <i class="bi bi-cloud-arrow-up-fill"></i>
+                                </div>
+                                <h5 class="fw-bold mb-1">Drag and drop screenshots here, or browse files</h5>
+                                <p class="text-muted small mb-0">Supported formats: PNG, JPG, JPEG, WEBP • Max file size: 10 MB per image</p>
+                                <input type="file" id="screenshotInput" name="screenshots" multiple accept="image/png, image/jpeg, image/webp" class="d-none">
+                            </div>
+
+                            <div id="uploadError" class="alert alert-danger mt-3 py-2 small" style="display: none;"></div>
+
+                            <!-- Preview Grid for uploaded screenshots -->
+                            <div id="screenshotPreviewGrid" class="preview-grid"></div>
+                        </div>
+
+                        <!-- ========================================================================
+                             Section G: Additional Suggestions & Recommendation
+                             ======================================================================== -->
+                        <div class="form-section-card">
+                            <div class="form-section-header">
+                                <div class="d-flex align-items-center">
+                                    <div class="section-badge">G</div>
+                                    <div>
+                                        <div class="section-title">Additional Suggestions & Recommendation</div>
+                                        <p class="section-desc">Would you recommend IIT Delhi Virtual Labs to classmates and colleagues?</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                                <div>
+                                    <label class="form-label d-block mb-1">Would you recommend this virtual lab to others?</label>
+                                    <div class="recommend-pill-group">
+                                        <div>
+                                            <input type="radio" class="d-none recommend-radio" name="recommendation" id="rec_yes" value="Yes" checked>
+                                            <label class="recommend-pill-label" for="rec_yes">
+                                                <i class="bi bi-hand-thumbs-up me-1"></i>Yes, Highly
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <input type="radio" class="d-none recommend-radio" name="recommendation" id="rec_maybe" value="Maybe">
+                                            <label class="recommend-pill-label" for="rec_maybe">
+                                                <i class="bi bi-question-circle me-1"></i>Maybe
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <input type="radio" class="d-none recommend-radio" name="recommendation" id="rec_no" value="No">
+                                            <label class="recommend-pill-label" for="rec_no">
+                                                <i class="bi bi-hand-thumbs-down me-1"></i>No
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="text-muted small" style="max-width: 320px;">
+                                    <i class="bi bi-lock me-1"></i>Your responses directly inform the National Advisory Board curriculum committee for academic year 2026-27.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ========================================================================
+                             5. Submit Feedback Action Bar
+                             ======================================================================== -->
+                        <div class="submit-action-card">
+                            <div class="d-flex flex-wrap justify-content-center align-items-center gap-3">
+                                <button type="button" class="btn btn-outline-secondary btn-lg px-4" id="btnPreviewFeedback">
+                                    <i class="bi bi-eye me-2"></i>Preview Feedback
+                                </button>
+                                <button type="submit" class="btn btn-submit-feedback" id="btnSubmitFeedback">
+                                    <span class="spinner-border spinner-border-sm me-2 d-none" id="submitSpinner" role="status"></span>
+                                    <span id="submitBtnText"><i class="bi bi-send-check-fill me-2"></i>SUBMIT FEEDBACK</span>
+                                </button>
+                            </div>
+                            <div class="mt-3">
+                                <small class="text-muted">By submitting, you agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal" class="text-decoration-underline text-muted">Feedback Privacy & Data Usage Notice</a>.</small>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================================
+         Modals
+         ======================================================================== -->
+
+    <!-- Feedback Preview Modal -->
+    <div class="modal fade" id="feedbackPreviewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="previewModalLabel">
+                        <i class="bi bi-clipboard-check text-maroon me-2"></i>Review Your Feedback Submission
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="text-muted small mb-4">Please verify the details below before submitting to the IIT Delhi Virtual Labs repository.</p>
+
+                    <div class="card border-0 bg-body-tertiary p-3 rounded-3 mb-3">
+                        <div class="row g-2 small">
+                            <div class="col-sm-6"><strong>User:</strong> <span id="prevUser"></span></div>
+                            <div class="col-sm-6"><strong>Email:</strong> <span id="prevEmail"></span></div>
+                            <div class="col-sm-6"><strong>Subject:</strong> <span id="prevSubject"></span></div>
+                            <div class="col-sm-6"><strong>Experiment:</strong> <span id="prevExperiment"></span></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6 class="fw-bold mb-2">Ratings Assigned:</h6>
+                        <div id="prevRatings" class="bg-body-tertiary p-3 rounded-3"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6 class="fw-bold mb-2">Reported Issues:</h6>
+                        <div id="prevIssues" class="bg-body-tertiary p-2 rounded-3 small"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6 class="fw-bold mb-1">Experience Description:</h6>
+                        <p id="prevDescription" class="p-3 bg-body-tertiary rounded-3 text-secondary small mb-0"></p>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2 small text-muted">
+                        <i class="bi bi-paperclip"></i>
+                        <span id="prevScreenshotsCount">0 images attached</span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Make Edits</button>
+                    <button type="button" class="btn btn-maroon" id="btnSubmitFromPreview">
+                        <i class="bi bi-check-circle me-1"></i>Confirm and Submit
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Reset Modal -->
+    <div class="modal fade" id="confirmResetModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content text-center p-3">
+                <div class="modal-body">
+                    <i class="bi bi-exclamation-circle text-danger fs-1 mb-2 d-block"></i>
+                    <h5 class="fw-bold">Reset Feedback Form?</h5>
+                    <p class="text-muted small mb-3">All entered answers, ratings, and attached screenshots will be cleared.</p>
+                    <div class="d-flex justify-content-center gap-2">
+                        <button type="button" class="btn btn-secondary btn-sm px-3" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger btn-sm px-3" id="btnConfirmReset">Yes, Reset</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Guidelines Modal -->
+    <div class="modal fade" id="guidelinesModal" tabindex="-1" aria-labelledby="guidelinesLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="guidelinesLabel">
+                        <i class="bi bi-book-half text-maroon me-2"></i>Virtual Labs Feedback Guidelines
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <h6 class="fw-bold text-maroon">1. Purpose of Feedback</h6>
+                    <p class="small text-muted">
+                        IIT Delhi Virtual Labs aims to provide flawless academic simulation tools across colleges nationwide. Your feedback is reviewed by domain subject coordinators and web engineering developers.
+                    </p>
+
+                    <h6 class="fw-bold text-maroon">2. Constructive Bug Reporting</h6>
+                    <p class="small text-muted">
+                        When reporting errors or simulation failures, please identify the step where the experiment failed, your browser model, and attach a screenshot of the console or simulator canvas.
+                    </p>
+
+                    <h6 class="fw-bold text-maroon">3. Screenshot Guidelines</h6>
+                    <ul class="small text-muted">
+                        <li>Do not upload screenshots containing sensitive passwords, banking details, or confidential personal information.</li>
+                        <li>Highlight the error banner or miscalculated graphs where applicable.</li>
+                        <li>Accepted formats: PNG, JPG, JPEG, WEBP up to 10 MB each.</li>
+                    </ul>
+
+                    <h6 class="fw-bold text-maroon">4. Follow-up Procedure</h6>
+                    <p class="small text-muted mb-0">
+                        Every submission generates a unique tracking reference code (`IITD-VL-2026-XXXXXX`). You can cite this reference ID when contacting your institution's Virtual Labs nodal center.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-maroon px-4" data-bs-dismiss="modal">Understood</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Notice Modal -->
+    <div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="privacyLabel">
+                        <i class="bi bi-shield-shaded text-maroon me-2"></i>Privacy & Data Handling Notice
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="small text-muted">
+                        IIT Delhi Virtual Labs is committed to data privacy and responsible academic information handling.
+                    </p>
+                    <ul class="small text-muted">
+                        <li><strong>Personal Data:</strong> Contact details (name, email, phone) are strictly used for diagnostic follow-up and are never shared with commercial third parties.</li>
+                        <li><strong>Anonymous Submission:</strong> If you select 'Submit Anonymously', no personal identifiers or IP contacts are linked to your feedback record.</li>
+                        <li><strong>Screenshots:</strong> Uploaded images are stored in protected directories accessible solely to authenticated administrators and system developers.</li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-maroon px-4" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================================
+         Footer Section
+         ======================================================================== -->
+    <footer class="portal-footer" id="contact">
+        <div class="container">
+            <div class="row g-4 justify-content-between">
+                <div class="col-lg-5">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="brand-seal" style="width: 38px; height: 38px; font-size: 1.1rem;">
+                            <i class="bi bi-mortarboard-fill"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-0">Indian Institute of Technology Delhi</h6>
+                            <span class="small text-muted">Virtual Labs Quality Management & Feedback Cell</span>
+                        </div>
+                    </div>
+                    <p class="small text-muted">
+                        An initiative under the National Mission on Education through ICT (NMEICT), Ministry of Education, Government of India. Empowering students and faculty with world-class virtual experimentation.
+                    </p>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <h6 class="fw-bold mb-3">Quick Links</h6>
+                    <ul class="list-unstyled small d-flex flex-column gap-2 text-muted">
+                        <li><a href="#home" class="text-decoration-none text-muted">Home</a></li>
+                        <li><a href="#about" class="text-decoration-none text-muted">About Virtual Labs</a></li>
+                        <li><a href="#feedbackSection" class="text-decoration-none text-muted">Submit Feedback</a></li>
+                        <li><a href="#" data-bs-toggle="modal" data-bs-target="#guidelinesModal" class="text-decoration-none text-muted">Feedback Guidelines</a></li>
+                        <li><a href="{{ url_for('admin_login') }}" class="text-decoration-none text-maroon fw-bold"><i class="bi bi-shield-lock me-1"></i>Admin Dashboard</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <h6 class="fw-bold mb-3">Contact Support</h6>
+                    <p class="small text-muted mb-1"><i class="bi bi-geo-alt-fill text-maroon me-2"></i>Hauz Khas, New Delhi, Delhi 110016, India</p>
+                    <p class="small text-muted mb-1"><i class="bi bi-envelope-fill text-maroon me-2"></i>support@vlabs.iitd.ac.in</p>
+                    <p class="small text-muted"><i class="bi bi-telephone-fill text-maroon me-2"></i>+91 (11) 2659-1000 / Virtual Labs Extension</p>
+                </div>
+            </div>
+
+            <hr class="my-4 border-secondary-subtle">
+
+            <div class="d-flex flex-wrap justify-content-between align-items-center text-muted small">
+                <div>&copy; 2026 Indian Institute of Technology Delhi. All Rights Reserved.</div>
+                <div>IIT Delhi Virtual Labs Smart Feedback Portal v2.4.0</div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5.3.3 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom Portal Script -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
+
